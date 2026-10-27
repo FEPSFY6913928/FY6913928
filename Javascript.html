@@ -1,193 +1,71 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    
-    <!-- Load Google Charts API -->
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    
-    <style>
-      table {
-        font-family: arial, sans-serif;
-        border-collapse: collapse;
-        width: 30%;
-      }
-      td, th {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-      }
-      tr:nth-child(even) {
-        background-color: #dddddd;
-      }
-      p.ex1 {
-        margin-left: 250px;
-      }
-    </style>
-  </head>
+// 1. Google Chart Script
+google.charts.load('current', {'packages': ['corechart']});
+google.charts.setOnLoadCallback(drawChart);
 
-  <body style="background-color:#FFFFFF;margin-left:50px;">
-    <img src="WebBanner2026.png" alt="Banner" width="1200" height="300">
-    <h1><b>ENG0018 Computer Laboratory 2026/27</b></h1>
-    <h2>Student URN: 6913928</h2>
-    <hr>
-    <h2 style="font-family:calibri;"><b>Conference paper: Bridge Deck Repairs</b></h2>
-    <hr>
-    
-    <table>
-      <tr><th><h3>Table of Contents</h3></th></tr>
-      <tr><td><a href="#Abstract">Abstract</a></td></tr>
-      <tr><td><a href="#Introduction">Introduction</a></td></tr>
-      <tr><td><a href="#Analysis and discussion">Analysis and discussion</a></td></tr>
-      <tr><td><a href="#References">References</a></td></tr>
-    </table>
-    
-    <h3 id="Abstract">Abstract</h3>
-    <p class="ex1">
-<pre>
-This paper presents a novel adaptive active learning strategy. The most accurate classification model from a heterogeneous
-classifier pool is selected at each learning epoch. Our goal is to achieve greater incremental improvement in accuracy, compared
-to using a single type of classification model throughout the process. The strategy is evaluated on benchmark data sets.
-We further consider an application to texture classification problems in sonar mosaic imagery and compare it with non-adaptive
-active learning and traditional machine learning approaches. Our results show that...We conclude that....
-</pre>
-    </p>
+function drawChart() {
+  var data = google.visualization.arrayToDataTable([
+    ['Task', 'Hours per Day'],
+    ['Work', 8],
+    ['Sleep', 8],
+    ['Eat', 2],
+    ['Study', 4],
+    ['Exercise', 2]
+  ]);
+  var options = { title: 'My Daily Activities' };
+  var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+  chart.draw(data, options);
+}
 
-    <h3 id="Introduction">Introduction</h3>
-    <p class="ex1">
-<!-- ID added here for the word counter -->
-<pre id="Introduction_InText">
-Active Learning (Angluin, 1988, Cohn et al., 1994) is a paradigm where a concept is learnt by an
-intelligent machine through the interaction of an oracle with the machine system, over a sequence of
-learning epochs.
-</pre>
-    </p>
-      
-    <h3 id="Analysis and discussion">Analysis and discussion</h3>
-<!-- ID added here for the word counter -->
-    <p id="Analysis_InText">
-      Bridge deck repair durability is the subject of much recent research such as in <a href="https://www.icevirtuallibrary.com/doi/full/10.1680/jbren.21.00034"Download PDF>Toshihiko et al (2023).</a> Table 1: Data on the cost and lifespan of bridge repairs
-    </p>
-      
-    <table>
-      <tr>
-        <th>£ Cost of repairs</th>
-        <th>Lifespan of repairs (years)</th>
-      </tr>
-      <tr><td>0.7m</td><td>2</td></tr>
-      <tr><td>3.3m</td><td>4</td></tr>
-      <tr><td>2.6m</td><td>5</td></tr>
-      <tr><td>8.8m</td><td>9</td></tr>
-    </table>
+// 2. Word Count Script
+function displayWordCount(sectionId) {
+  const text = document.getElementById(sectionId).textContent;
+  const wordArray = text.trim().split(/\s+/);
+  return wordArray.length;
+}
 
-    <!-- Google Chart Container -->
-    <div id="chart_div"></div>
-      
-    <p>Formatting some equations using MathML 
-      <math xmlns="http://www.w3.org/1998/Math/MathML">
-        <mrow>
-          <msup><mi>x</mi><mn>2</mn></msup>
-          <mo>+</mo><mi>4</mi><mo>&InvisibleTimes;</mo><mi>x</mi>
-          <mo>+</mo><mi>4</mi>
-          <mo>=</mo>
-          <mi>0</mi>
-        </mrow>
-      </math>
-    </p>
-      
-    <h3 id="References">References</h3>
-    <p class="ex1">
-<pre>
-Angluin, D (1988), Queries and concept learning. Machine learning 2, (4), 319-342.
-Brinker, K (2003), Incorporating Diversity in Active Learning with Support Vector Machines,
-Proceedings of the Twentieth International Conference on Machine Learning (ICML-2003).
-</pre>
-    </p>
+function displayTotalWordCount() {
+  const IntroductionCount = displayWordCount("Introduction_InText");
+  const AnalysisCount = displayWordCount("Analysis_InText");
+  const totalWordCount = IntroductionCount + AnalysisCount;
+  document.getElementById("totalWordCount").innerText = 'Total word count: ' + totalWordCount;
+}
 
-    <!-- Word Count Output -->
-    <p id="totalWordCount"></p>
-    <hr>
+// 3. Timestamp Script
+async function getLastUpdatedTime() {
+  // REPLACE THESE WITH YOUR GITHUB DETAILS
+  const username = 'YOUR_USERNAME'; 
+  const repo = 'YOUR_REPOSITORY'; 
+  
+  const url = `https://api.github.com/repos/${username}/${repo}/commits`;
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: { 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (!response.ok) {
+      throw new Error(`Error fetching data: ${response.status} ${response.statusText}`);
+    }
+    const commits = await response.json();
+    if (commits && commits.length > 0) {
+      const lastCommitDate = new Date(commits[0].commit.committer.date);
+      document.getElementById('last-updated').innerText = 'Last Modified Time: ' + lastCommitDate.toLocaleString();
+    } else {
+      document.getElementById('last-updated').innerText = 'No commits found in the repository.';
+    }
+  } catch (error) {
+    console.error('Error fetching the last updated time:', error);
+    document.getElementById('last-updated').innerText = 'Error fetching update time. Please check the repository details.';
+  }
+}
 
-    <!-- Timestamp Output -->
-    <div id="last-updated">Loading last update time...</div>
-    <button onclick="verifyLastUpdatedTime()" style="display: block; margin: 10px auto; padding: 8px 16px;">
-      Verify Last Modified Time
-    </button>
+async function verifyLastUpdatedTime() {
+  document.getElementById('last-updated').innerText = 'Verifying...';
+  await getLastUpdatedTime();
+  alert("Last modified time has been successfully verified from GitHub API.");
+}
 
-    <!-- Combined JavaScript -->
-    <script>
-      // 1. Google Chart Script
-      google.charts.load('current', {'packages': ['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
-      
-      function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-          ['Task', 'Hours per Day'],
-          ['Work', 8],
-          ['Sleep', 8],
-          ['Eat', 2],
-          ['Study', 4],
-          ['Exercise', 2]
-        ]);
-        var options = { title: 'My Daily Activities' };
-        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
-      }
-
-      // 2. Word Count Script
-      function displayWordCount(sectionId) {
-        const text = document.getElementById(sectionId).textContent;
-        const wordArray = text.trim().split(/\s+/);
-        return wordArray.length;
-      }
-
-      function displayTotalWordCount() {
-        const IntroductionCount = displayWordCount("Introduction_InText");
-        const AnalysisCount = displayWordCount("Analysis_InText");
-        const totalWordCount = IntroductionCount + AnalysisCount;
-        document.getElementById("totalWordCount").innerText = 'Total word count: ' + totalWordCount;
-      }
-
-      // 3. Timestamp Script
-      async function getLastUpdatedTime() {
-        // REPLACE THESE WITH YOUR GITHUB DETAILS
-        const username = 'YOUR_USERNAME'; 
-        const repo = 'YOUR_REPOSITORY'; 
-        
-        const url = `https://api.github.com/repos/${username}/${repo}/commits`;
-        try {
-          const response = await fetch(url, {
-            method: 'GET',
-            headers: { 'Accept': 'application/vnd.github.v3+json' }
-          });
-          if (!response.ok) {
-            throw new Error(`Error fetching data: ${response.status} ${response.statusText}`);
-          }
-          const commits = await response.json();
-          if (commits && commits.length > 0) {
-            const lastCommitDate = new Date(commits[0].commit.committer.date);
-            document.getElementById('last-updated').innerText = 'Last Modified Time: ' + lastCommitDate.toLocaleString();
-          } else {
-            document.getElementById('last-updated').innerText = 'No commits found in the repository.';
-          }
-        } catch (error) {
-          console.error('Error fetching the last updated time:', error);
-          document.getElementById('last-updated').innerText = 'Error fetching update time. Please check the repository details.';
-        }
-      }
-
-      async function verifyLastUpdatedTime() {
-        document.getElementById('last-updated').innerText = 'Verifying...';
-        await getLastUpdatedTime();
-        alert("Last modified time has been successfully verified from GitHub API.");
-      }
-
-      // 4. Run scripts on page load
-      window.onload = function() {
-        displayTotalWordCount();
-        getLastUpdatedTime();
-      };
-    </script>
-  </body>
-</html>
+// 4. Run scripts on page load
+window.onload = function() {
+  displayTotalWordCount();
+  getLastUpdatedTime();
+};
